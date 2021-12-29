@@ -1,0 +1,75 @@
+
+\   Polar co-ordinate parametric curve evaluator
+
+PUBLIC:
+    80 characters Curve_Name
+    80 characters r_expression
+    real a
+    real b
+    real c
+    80 characters theta_min
+    80 characters theta_max
+    integer steps
+
+PRIVATE:
+
+132 string s
+
+2variable tstep
+variable pr
+variable tee
+2variable tmin
+variable evstr
+
+: eval
+    dup evstr !
+    evaluate
+    0<> if
+        evstr @ type cr
+        abort" "Error in above expression"
+    then
+;
+
+60 string zz
+
+method draw
+{
+    \ Purge any trash definition left by error in earlier draw call
+    "(param)" find if drop "forget (param)" evaluate drop then drop
+
+    ": (param) ;" eval
+    1 (redefine)
+    a 2@ "2constant a" eval
+    b 2@ "2constant b" eval
+    c 2@ "2constant c" eval
+    0 (redefine)
+    theta_min eval 2dup tmin 2! "2constant theta" eval
+    "theta" find drop >body tee !
+
+    ": parr " s s! r_expression s s+ " ; " s s+ s eval
+
+    theta_max eval tmin 2@ f- steps @ float f/ tstep 2!
+    "parr" find drop pr !
+
+    penup
+    steps @ 1+ 0 ?do
+        pr @ execute
+
+        2dup tee @ 2@ cos f* 2swap tee @ 2@ sin f* 0.0
+        setposition
+        tee @ 2@ tstep 2@ f+ tee @ 2!
+        pendown
+    loop
+    "forget (param)" evaluate drop
+}
+
+method acquire
+{
+    "Nephroid of Freeth" curve_name s!
+    "a 1.0 2.0 0.5 theta f* sin f* f+ f*" r_expression s!
+    1.0 a 2!
+    "2.0 Pi f* fnegate" theta_min s!
+    "2.0 Pi f*" theta_max s!
+    50 steps !
+    this object.inspect
+}

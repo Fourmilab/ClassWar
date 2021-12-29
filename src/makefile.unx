@@ -1,0 +1,57 @@
+
+#   Unix make instructions for ClassWar
+
+#   Directory locations in distribution tree
+
+ACAD = ../../acad
+ADS = ..
+ACUTIL = ../../acadutil
+CLASSES = classes
+
+LIBRARIES = -lm /usr/lib/debug/malloc.o
+
+INCLUDE = -I$(ADS) -I$(ACUTIL)
+
+ATLCONFIG = -DMEMSTAT -DALIGNMENT -DEXPORT
+
+CFLAGS = -g $(INCLUDE) $(ATLCONFIG)
+
+APPS = class classapp.o
+
+all:	$(APPS)
+
+atlas_ads.o:
+	cc -c $(ACUTIL)/atlas.c -o atlas_ads.o $(CFLAGS) -DADS
+
+sglib.o:    sglib.c sglib.h
+	cc -c sglib.c $(CFLAGS) -DADS
+
+CLASSOBJ = class.o adsclass.o atlas_ads.o sglib.o queues.o atlads.o \
+	   atlgeom.o extclass.o inspect.o clsedit.o classarg.o	    \
+	   classcmd.o platsol.o
+
+class:	$(CLASSOBJ)
+	cc $(CFLAGS) $(CLASSOBJ) -o class $(LIBRARIES) $(ads)/ads.a
+	rm -f $(ACAD)/class
+	cp class $(ACAD)
+
+.c.o:
+	cc -c $*.c -o $*.o $(CFLAGS)
+
+#    Clean up prior to complete rebuild
+
+clean:
+	rm -f $(APPS) $(CLASSES)/*.bak
+	rm -f *.bak *.o *.dvi *.ps *.aux *.log
+	rm -f core cscope.out
+	( cd mtnapp ; make -f makefile.unx clean )
+
+#   Copy all class definitions to the AutoCAD execution directory
+
+classcopy:
+	cp $(CLASSES)/*.cls $(ACAD)
+
+backup:
+	mt rewind
+	tar cfbv /dev/rst0 126 *
+	mt rewind

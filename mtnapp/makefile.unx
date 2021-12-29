@@ -1,0 +1,34 @@
+
+#   Unix makefile for ClassWar external command method programs
+
+#   Directory locations in distribution tree
+
+ACAD = ../../../acad
+ADS = ../..
+CLASSWAR = ..
+
+#  Assumes standard Unix tools are to be used and this file is simply
+#  invoked by make.
+
+.c.o:
+	cc -c -g $*.c -o $*.o -DUNIX -I$(ADS)
+#	cc -c -O4 $*.c -o $*.o -DUNIX -I$(ADS) /usr/lib/libm.il
+
+#   This will always make all those listed
+
+all:   mtnapp
+
+mtnapp: mtnapp.o dumpargs.o
+	cc -g -o mtnapp mtnapp.o dumpargs.o $(CLASSWAR)/classapp.o \
+		 $(ADS)/ads.a -lm
+	rm -f $(ACAD)/mtnapp
+	@echo cp mtnapp $(ACAD)
+	@cp mtnapp $(ACAD)
+
+mtnapp.o:   mtnapp.c mountain.h
+
+import:
+	cp -p /tmp/m.h mountain.h
+
+clean:
+	rm -f *.o mtnapp *.bak cscope.out core

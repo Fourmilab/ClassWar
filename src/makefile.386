@@ -1,0 +1,70 @@
+
+#  Make instructions for PharLap ClassWar
+
+
+#   Directory locations in distribution tree
+
+ACAD = ..\..\acad
+ADS = ..
+ACUTIL = ..\..\acadutil
+CLASSES = classes
+
+IPATH = -ip $(ADS)\;$(ACUTIL)\;$(HIGHC)\INC\\
+
+LIST  =
+CFLAGS= -re -pr class386.pro -noansi -on Quiet
+
+CLASSOBJ = class.obj adsclass.obj atlas.obj sglib.obj queues.obj   \
+	   atlads.obj atlgeom.obj extclass.obj inspect.obj clsedit.obj \
+	   classarg.obj classcmd.obj platsol.obj
+
+all:    class.exp classapp.obj
+
+#   Build ClassWar executable and copy to AutoCAD execution directory
+
+class.exp: $(CLASSOBJ)
+	386linkp $(ADS)\ads.lib @class386.lnk -lib $(HIGHC)\hcc -exe class
+	copy class.exp $(ACAD)
+
+#   Special instructions to compile Atlas from the acadutil
+#   directory to this directory, using the special profile that
+#   will configure an ADS-compatible version.
+
+atlas.obj: $(ACUTIL)\atlas.c $(ACUTIL)\atlas.h $(ACUTIL)\atlasdef.h
+	@echo Compiling $*.c >con
+	@if exist $*.obj del $*.obj
+	@if exist $*.err del $*.err
+	-@hc386p $(ACUTIL)\$* $(IPATH) $(CFLAGS) -ob $* >& $(RDPRE)\$*.err
+	!if $(status) != 0
+	   @copy $(RDPRE)\$*.err >nul
+	   @type $(RDPRE)\$*.err
+	!elif $(LIST)
+	   @type $(RDPRE)\$*.err
+	!endif
+	@del $(RDPRE)\$*.err
+
+#   Clean up for a new build
+
+clean:
+	find *.obj *.exp *.bak *.map -rm
+
+#   Copy all class definitions to the AutoCAD execution directory
+
+classcopy:
+	copy $(CLASSES)\*.cls $(ACAD)
+
+
+.SUFFIXES: .obj .c
+
+.c.obj:
+	@echo Compiling $*.c >con
+	@if exist $*.obj del $*.obj
+	@if exist $*.err del $*.err
+	-@hc386p $* $(IPATH) $(CFLAGS) -ob $* >& $(RDPRE)\$*.err
+	!if $(status) != 0
+	   @copy $(RDPRE)\$*.err >nul
+	   @type $(RDPRE)\$*.err
+	!elif $(LIST)
+	   @type $(RDPRE)\$*.err
+	!endif
+	@del $(RDPRE)\$*.err

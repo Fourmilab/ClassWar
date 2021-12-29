@@ -1,0 +1,224 @@
+
+If you've seen the video demo of ClassWar presented at the R11 developer
+meeting yesterday and want to play with it, here's a brief summary of
+the essential details you need to know.  A comprehensive document will
+be forthcoming, but don't look for it in the next two weeks.
+
+THE SOURCE
+
+...is available in the Technet directory:
+
+        kropotkin:~kelvin/classwar
+
+The objects in this directory are built for Sun 3 running 4.0.3 (which is
+what kropotkin is); you'll have to rebuild for other machines.  ClassWar
+worked fine the last time I tried it on a SparcStation (iskra: yesterday) and
+on a 386i (plywood: last week).  I do not expect it to work the first time on
+non-Sun platforms, judging from my experience with DXFIX; the problems
+should not be major but will almost certainly be irritating.  If you
+plunge into this adventure please send me any fixes you generate.
+
+Note that kropotkin does not run Automounter (it's a recent transplant from
+ThroopNet which knows not such arcana) so you may have to rlogin
+(which should work) and copy to another system.  It does mount some
+essential directories on megalon so you should be able to get the files
+one way or another.
+
+THE BUILD
+
+To build ClassWar, simply make the release directory your current directory
+and issue the commands:
+
+        make clean
+        make
+
+Note that this directory actually contains Atlas, DXFIX, and several other
+programs as well.  DO NOT USE THE VERSION OF DXFIX IN THIS DIRECTORY!!!!!
+Scott Heath has found and fixed a horrible bug in the ADSDXF.C library
+relating to extended entity data which will appear in the AutoCAD source
+distribution but is not presently included in this directory.  I will be
+splitting this directory into a generic Atlas environment and subdirectories
+for various applications, but I haven't the time at the moment.
+
+The make instructions for ClassWar (executable file name "class") assume that
+the ADS developer release or source distribution directory is available as
+$ads.  They copy the generated application and all the class definitions
+(.cls files) to your $acad directory, which is also assumed to be defined.
+
+IMPORTANT!!!  The process of copying all the .cls files into your $acad
+directory copies the two files "config.cls" and "object.cls" along with the
+assorted class definitions.  As I mentioned in the video, about half of
+ClassWar is implemented in Atlas, particularly the low-level details of
+the OBJECT superclass.  These files (which will probably be moved to C
+code in the final version of the product in the interest of Purity Of Essence)
+must be available on the AutoCAD search path as used by ads_findfile().
+Otherwise, ClassWar will disable itself, as it can't do very much in the
+absence of a definition of the class OBJECT.
+
+RUNNING IT
+
+Once you've built the application and it and the class definitions have been
+copied to $acad, you're nanometres from hog heaven.  Load AutoCAD, open a new
+drawing, and enter:
+
+        (xload "class")
+
+this should respond "class", and you can then use all the built-in ClassWar
+commands (or, in objectese, the methods of the OBJECT superclass):
+
+        CLASSDEF        Enter a class definition on the fly.  If you enter
+                        a class name and the first line of the class
+                        definition is:
+
+                                <filename
+
+                        the class definition is imported from the named file,
+                        assuming an extension of ".cls" if none is specified.
+
+        CLASSFILE       Reference a class defined in a file.  Enter the class
+                        name and the file name that defines it.  If the file
+                        name is blank, the class and file are assumed eponymous.
+
+        CLASSEDIT       Open a class definition for modification.  An internal
+                        class (CLASSDEF) can be edited; an external class
+                        (CLASSFILE) can only be redirected to another defining
+                        file.  All instances of the class are updated to reflect
+                        the new class definition.  You can specify the class to
+                        be edited either by picking an instance of the class
+                        or by typing in the class name.
+
+        INSPECT         Pick an object.  Its instance variables are displayed
+                        and you can change them as you wish.  If you pick
+                        OK, the object is updated to reflect your changes.
+
+        INSPCLASS       Same as INSPECT, but operates on class variables
+                        rather than instance variables.
+
+        SPY             Same as INSPECT, but allows access to variables
+                        declared PRIVATE and PROTECTED (July 4, 1966 demo only).
+
+        SPYCLASS        Same as SPY, but worketh upon class variables.
+
+        CLASSTOC        Specify a class by picking an instance of it or
+                        entering its name.  A C header file is generated that
+                        permits other applications that use CLASSAPP.C to
+                        implement EXTERNAL methods of the class.
+
+        ATLAS           Drops you into a version of interactive Atlas while
+                        remaining within AutoCAD.  A blank line input gets you
+                        back to AutoCAD right where you left off.
+
+        /               Lets you enter a single-line Atlas expression.  That
+                        expression is evaluated and you're returned to the
+                        AutoCAD command prompt.  This is handy for examining
+                        variables and the like: the same times you'd use the
+                        "!" that denotes a one-liner Lisp expression.  Note
+                        that a space must follow the "/", as it is a real,
+                        live AutoCAD command despite its unorthodox moniker.
+
+        UBI             Tells you how many times ads_usrbrk() has been called
+                        and resets the count.  In case you wondered.....
+
+If you'll be loading large classes, you may wish to request more memory for
+ClassWar definitions by setting the environment variable CLASSHEAP.  This
+variable specifies the storage reserved for ClassWar definitions in terms
+of 4 byte Atlas items.  The default of 5000 reserves 20,000 bytes.
+
+INTERESTING CLASSES
+
+The following geometric entity classes are defined at present.  Examining
+their source code will lead you into the system classes I lack the time to
+describe in this note (such as the turtle geometry facilities, the SGLIB-based
+linear algebra classes such as POINT, 4VECTOR (homogeneous co-ordinate vector),
+and MATRIX, and the general ADS_ENTMAKE bindings for arbitrary geometry
+creation).
+
+        POLY.CLS        Simple polygon as shown in the video.  Uses the
+                        turtle.
+
+        DPOLY.CLS       Called LPOLY in the video.  Derived from POLY, uses
+                        ADS_ENTMAKE to label each polygon with the number of
+                        sides as a text item.
+
+        LPOLY.CLS       A stand-alone LPOLY that doesn't inherit POLY.
+
+        4POLY.CLS       Shown in the video as a class that uses instances of
+                        LPOLY.  Demonstrates instances of classes within a
+                        new class, message passing to constituent classes, and
+                        the behaviour of PRIVATE and PROTECTED variables when
+                        instances of classes are declared within another class
+                        definition.
+
+        POLYHEDRON.CLS  Uses the SGLIB geometry creation facilities to generate
+                        the regular Platonic solids.  Still contains the bug
+                        demonstrated in the video--invalid solids generate a
+                        sphere rather than the closest regular polyhedron.
+
+        TREE.CLS        Fractal trees as defined in "Turtle geometry".  Enjoy.
+
+        AILOGO.CLS      The Autodesk logo, realised as an extruded solid.
+                        Demonstrates SGLIB geometry definition facilities.
+
+        HILBERT.CLS     The Hilbert curve, recursively defined.  Uses the
+                        turtle.
+
+        PARAM.CLS       Three-dimensional parametric curves as shown in the
+                        video.  Defaults to an ellipse.
+
+        POLAR.CLS       Two-dimensional parametric polar co-ordinate curves.
+                        Defaults to the Nephroid of Freeth.
+
+        SIERP.CLS       The Sierpinski gasket.  Uses the turtle.
+
+        SOCBAL.CLS      The soccer ball / implosion bomb.  Uses SGLIB.
+
+        SHUTTLE.CLS     The space shuttle orbiter.  A rat nest mesh defined
+                        with SGLIB.
+
+        VW.CLS          The VW bug.  SGLIB.
+
+        KLEIN.CLS       The Klein bottle.  SGLIB.
+
+        PLOT3D.CLS      Three dimensional plot of a function of X and Y as
+                        shown in the video.  Demonstrates ADS_ENTMAKE object
+                        creation.
+
+        BLOBMAN.CLS     The Blobby Man.  You can make s/he/it stand at
+                        attention with the ATTENTION message or wave at you
+                        with the WAVE message.  Use INSPECT to create your
+                        own postures.  Demonstrates nested transformations
+                        and the SGLIB geometry definition facilities.  This
+                        class definition is large; you'll have to increase
+                        CLASSHEAP well above the default of 5000 to load it.
+
+        MOUNTAIN.CLS    The fractal mountain application used in the video to
+                        demonstrate EXTERNAL methods.  To repeat the
+                        operations in the demo, you must remake the contents
+                        of the "mtnapp" subdirectory of your ClassWar
+                        directory, then load the application into AutoCAD with
+                                (xload "mtnapp")
+                        as done in the video.
+
+At this point I'm not terribly interested in bug reports.  Bugs--Hell, I'm
+amazed the sucker runs at all given how much it's been hacked and slashed
+in the last month:
+
+        "On Slasher,
+         On Basher,
+         On Blunder and Nixon."
+
+At this stage, I'm much more interested in candid evaluations of the overall
+comprehensibility, merit, and applicability of this work to the various
+problem domains within geometric modeling that you understand far better than
+I.  I have not yet adequately discussed polymorphic downward propagation and
+widening, which hold the solution to the problems created when attempting
+to perform operations on geometry created by two applications developed without
+knowledge of one another.  I hope to clarify this in the document.
+
+If you haven't the slightest idea what this is all about, the ClassWar video
+demo is available for viewing in the library.  I left it just to the right of
+the VCR.  It takes about 90 minutes if you can resist the fast forward button.
+
+If you create any useful, amusing, or simply spiffy classes, please mail
+them to me so I can include them in the document and release.
+

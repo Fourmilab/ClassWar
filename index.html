@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>ClassWar</title>
+<link rel="stylesheet" href="https://www.fourmilab.ch/documents/styles/standard_screen.css" type="text/css" />
+<meta name="keywords" content="ClassWar, AutoCAD, ADS, ATLAST, object orientation" />
+<meta name="description" content="ClassWar" />
+<meta name="author" content="John Walker" />
+<meta name="robots" content="index" />
+<style>
+    p {
+        text-align: justify
+    }
+
+    table.menu td.d {
+        padding-left: 1em;
+        vertical-align: top;
+    }
+
+    table.menu td.d a {
+        font-weight: bold;
+        font-size: 24px;
+    }
+</style>
+</head>
+
+<!--  Warning!  This document contains Unicode characters in the
+      UTF-8 encoding.  It must be edited with an editor which
+      understands that character set.  Editing with an 8-bit
+      ASCII/ISO editor is likely to wreck the document.  -->
+
+<body class="standard">
+<table style="width: 100%;">
+<tr>
+<td class="l">
+<a href="/" class="i"><img src="https://www.fourmilab.ch/images/logo/swlogo.png"
+    class="button" width="82" height="74" alt="Fourmilab home" /></a>
+</td>
+<td class="m">
+<h1 class="c" style="margin-bottom: 0px;">ClassWar</h1>
+<h2 class="c" style="margin-top: 0px;">Class Language Application Support System<br />
+    Within AutoCAD. Really!</h2>
+</td>
+<td class="r" style="width: 82px;">
+<img src="https://www.fourmilab.ch/autofile/e5/figures/ailogo.png"
+    class="button" width="82" height="74" alt="AutoCAD logo" />
+</tr>
+</table>
+
+<hr />
+
+
+<p>Software development, like business administration, is prone to fads.
+It seems like every five or ten years some new craze captures the
+imagination of those in the industry (or, more commonly, and worse,
+their managers, who only dimly understand the details of the matter
+but have heard the buzzwords on the lips of their peers).  In the
+latter part of the 1980s and early 1990s, one consuming passion was
+“object orientation”, which has its roots in languages such as Simula
+from the 1960s and Smalltalk in the 1970s, and became all the rage
+when languages such as C++ and Objective C brought some its concepts
+into the mainstream.</p>
+
+<p>The computer-aided design (CAD) world was, arguably, one of the first
+to adopt an object model, with Ivan Sutherland's Sketchpad system,
+developed in 1960 and 1961, embodying concepts such as definitions,
+objects, and instances.  In the late 1980s, workstation CAD vendor
+Intergraph jumped on the object oriented bandwagon by promoting their
+system as having an “object oriented database”.  It was, of course,
+nothing of the sort, being simply a conventional geometry database
+with the latest buzzword glued on by the marketing people.  It was
+just like the chrome plating I had mocked in the era by declaring my
+software “Turbo Digital”, embodying two of the hottest 1980s consumer
+product Pavlov stimuli, and proclaiming “Digital isn't enough any
+more”.</p>
+
+<p>Object orientation, as usually defined, is built upon four pillars:</p>
+
+<ul>
+<li>Abstraction</li>
+<li>Encapsulation</li>
+<li>Inheritance</li>
+<li>Polymorphism</li>
+</ul>
+
+<p>which are, in any case, more properties of a programming language than
+a database.</p>
+
+<p>In 1990, Autodesk was working toward the release of AutoCAD Release 11,
+one of whose major features was the AutoCAD Development System (ADS),
+which allowed users and third-party developers to extend AutoCAD with
+C language programs that ran as fast as AutoCAD's internal code, adding
+new objects, commands, and database information without requiring any
+changes to AutoCAD.  Concurrently, in early 1990 I had completed
+development of <a href="https://www.fourmilab.ch/atlast/"
+    target="Classwar_Aux">ATLAST</a>, the
+“Autodesk Threaded Language Application System Toolkit”, a FORTH-like
+embedded language that was originally intended (but never actually
+used) to communicate between a “headless” AutoCAD and machine-specific
+front-ends customised for the window systems and user interface
+paradigms of platforms that ran AutoCAD.</p>
+
+<p>It occurred to me that by using ADS and ATLAST as the foundation, I
+could, with a modest amount of effort, create a <em>genuine</em> object
+oriented CAD system, provide a worked example of an ambitious ADS
+application for developers wishing to learn the system, and demonstrate
+how ATLAST made building fast, open, and extensible systems easy.  I
+could also have some fun at the expense of Intergraph, which I was
+<a href="https://www.fourmilab.ch/autofile/e5/chapter2_46.html#n2639"
+    target="Classwar_Aux">always up for</a>.</p>
+
+<p>Thus was born ClassWar, a rather pained acronym for “Class Language
+Application Support System Within AutoCAD. Really!” which additionally
+tweaked Intergraph, whose sales force was deriding AutoCAD as “toy
+CAD for unserious people”, with the typical disdain of established
+aristocracy for proletarian upstarts.  ClassWar turned AutoCAD database
+objects (entities) into programmable objects, which could embed ATLAST
+code and ClassWar extensions that implemented every one of the
+pillars of object orientation.  It allowed users and developers to
+program new objects with their own behaviour, and to build upon
+libraries of previously-developed objects when developing their own.</p>
+
+<p>ClassWar shipped with AutoCAD Release 11 as one of a number of ADS
+demonstration programs but was never an officially-supported Autodesk
+product.  Several customers experimented with it and built custom
+objects using it but, to my knowledge, none of these were brought to
+market or widely used.</p>
+
+<p>ClassWar is almost entirely forgotten today, but not be me, who had a
+lot of fun designing, implementing, and demonstrating it at the time,
+and making fun of Intergraph's object oriented pretensions.  I doubt if
+anybody could get the code to run forty years later, even if there were
+any conceivable reason for doing so.  Consequently, this is a static
+archive of the code as it was in May 1990, and will not change. (Some
+files have modification dates which are more recent, but these are due
+to formatting changes which do not affect the code [for example,
+replacing hardware tabs with spaces, eliding trailing spaces, and
+making end of line characters consistent].)</p>
+
+<h3 class="nav"><a href="download/ClassWar-1.0.tar.gz">Download
+    <tt>ClassWar-1.0.tar.gz</tt></a> (663 Kb)</h3>
+<h3 class="nav"><a href="classwar.pdf" target="Classwar_Aux">Read ClassWar Documentation</a>
+[PDF, 354 Kb]</h3>
+
+<hr />
+
+<p><a href="/">John Walker</a><br />
+May, 1990<br />
+19,459 lines of code</p>
+</body>
+</html>

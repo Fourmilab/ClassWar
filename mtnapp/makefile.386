@@ -1,0 +1,47 @@
+
+#   Make instructions for PharLap ClassWar external command methods
+
+
+#   Directory locations in distribution tree
+
+ACAD = ..\..\..\acad
+ADS = ..\..
+CLASSWAR = ..
+
+IPATH = -ip $(ADS)\;$(HIGHC)\INC\\
+
+LIST  =
+CFLAGS= -re -pr $(CLASSWAR)\class386.pro -noansi -on Quiet
+
+all:	mtnapp.exp
+
+#   Build MTNAPP executable and copy to AutoCAD execution directory
+
+MTNOBJ = mtnapp.obj dumpargs.obj
+
+mtnapp.exp: $(MTNOBJ)
+	386linkp $(ADS)\ads.lib $(MTNOBJ) $(CLASSWAR)\classapp.obj -lib $(HIGHC)\hcc -exe mtnapp
+	copy mtnapp.exp $(ACAD)
+
+mtnapp.obj: mtnapp.c mountain.h
+
+#   Clean up for a new build
+
+clean:
+	find *.obj *.exp *.bak *.map *.err -rm
+
+
+.SUFFIXES: .obj .c
+
+.c.obj:
+	@echo Compiling $*.c >con
+	@if exist $*.obj del $*.obj
+	@if exist $*.err del $*.err
+	-@hc386p $* $(IPATH) $(CFLAGS) -ob $* >& $(RDPRE)\$*.err
+	!if $(status) != 0
+	   @copy $(RDPRE)\$*.err >nul
+	   @type $(RDPRE)\$*.err
+	!elif $(LIST)
+	   @type $(RDPRE)\$*.err
+	!endif
+	@del $(RDPRE)\$*.err

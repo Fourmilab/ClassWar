@@ -73,7 +73,7 @@ product.  Several customers experimented with it and built custom
 objects using it but, to my knowledge, none of these were brought to
 market or widely used.
 
-ClassWar is almost entirely forgotten today, but not be me, who had a
+ClassWar is almost entirely forgotten today, but not by me, who had a
 lot of fun designing, implementing, and demonstrating it at the time,
 and making fun of Intergraph's object oriented pretensions.  I doubt if
 anybody could get the code to run forty years later, even if there were
